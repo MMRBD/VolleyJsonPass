@@ -6,12 +6,14 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
@@ -36,14 +38,21 @@ public class MainActivity extends AppCompatActivity {
                 JsonObjectRequest jRequest = new JsonObjectRequest(Request.Method.POST, jsonURL, null, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-
+                        try {
+                            nametxt.setText(response.getString("Name"));
+                            emailtxt.setText(response.getString("Email"));
+                            mobiletxt.setText(response.getString("Mobile"));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-
+                        Toast.makeText(MainActivity.this, "Error: "+error, Toast.LENGTH_SHORT).show();
                     }
                 });
+                MySingleton.getInstent(MainActivity.this).addToRequestque(jRequest);
             }
         });
     }
